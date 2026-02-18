@@ -1,0 +1,137 @@
+<navigation-bar title="蓝牙OTA升级" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <view class="status-card">
+      <view class="status-icon {{isConnected ? 'connected' : 'disconnected'}}">
+        <text class="icon-text">BT</text>
+      </view>
+      <text class="status-text">{{isConnected ? '已连接' : '未连接'}}</text>
+      <text class="device-name" wx:if="{{connectedDevice}}">{{connectedDevice.name}}</text>
+    </view>
+
+    <view class="btn-group">
+      <button 
+        class="btn btn-primary" 
+        bindtap="onConnectBluetooth"
+        disabled="{{isUpgrading}}"
+        wx:if="{{!isConnected}}">
+        连接蓝牙
+      </button>
+      <button 
+        class="btn btn-danger" 
+        bindtap="onDisconnect"
+        disabled="{{isUpgrading}}"
+        wx:else>
+        断开连接
+      </button>
+    </view>
+
+    <view class="ota-section" wx:if="{{isConnected}}">
+      <view class="section-title">OTA升级</view>
+      
+      <view class="firmware-info">
+        <view class="firmware-row">
+          <text class="info-label">固件来源:</text>
+          <text class="info-value">{{firmwareSource || '未选择'}}</text>
+        </view>
+        <view class="firmware-row" wx:if="{{firmwareName}}">
+          <text class="info-label">文件名:</text>
+          <text class="info-value">{{firmwareName}}</text>
+        </view>
+        <view class="firmware-row" wx:if="{{firmwareSize > 0}}">
+          <text class="info-label">大小:</text>
+          <text class="info-value">{{firmwareSize}} 字节</text>
+        </view>
+      </view>
+
+      <view class="btn-group firmware-btns">
+        <button class="btn btn-small btn-outline" bindtap="onChooseFile" disabled="{{isUpgrading}}">
+          选择文件
+        </button>
+        <button class="btn btn-small btn-outline" bindtap="onShowFirmwareInput" disabled="{{isUpgrading}}">
+          输入链接
+        </button>
+      </view>
+
+      <view class="progress-section" wx:if="{{isUpgrading}}">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{otaProgress}}%"></view>
+        </view>
+        <text class="progress-text">{{otaProgress}}%</text>
+      </view>
+
+      <view class="status-info">
+        <text>{{otaStatus || '准备就绪'}}</text>
+      </view>
+
+      <view class="btn-group">
+        <button 
+          class="btn btn-success" 
+          bindtap="onStartOTA"
+          disabled="{{isUpgrading}}"
+          wx:if="{{!isUpgrading}}">
+          开始升级
+        </button>
+        <button 
+          class="btn btn-warning" 
+          bindtap="onCancelOTA"
+          wx:else>
+          取消升级
+        </button>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+
+<view class="device-modal" wx:if="{{showDeviceList}}">
+  <view class="modal-mask" bindtap="onCloseDeviceList"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">选择蓝牙设备</text>
+      <text class="modal-close" bindtap="onCloseDeviceList">×</text>
+    </view>
+    <view class="modal-body">
+      <view class="scanning-tip" wx:if="{{isScanning}}">
+        <text>正在搜索...</text>
+        <button class="btn-small" bindtap="onStopScan">停止搜索</button>
+      </view>
+      <view class="device-list" wx:if="{{deviceList.length > 0}}">
+        <view 
+          class="device-item" 
+          wx:for="{{deviceList}}" 
+          wx:key="deviceId"
+          data-device="{{item}}"
+          bindtap="onSelectDevice">
+          <text class="device-name">{{item.name}}</text>
+          <text class="device-rssi">信号: {{item.RSSI}} dBm</text>
+        </view>
+      </view>
+      <view class="empty-tip" wx:else>
+        <text>暂未发现设备</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="firmware-modal" wx:if="{{showFirmwareInput}}">
+  <view class="modal-mask" bindtap="onCancelFirmwareInput"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">输入固件链接</text>
+      <text class="modal-close" bindtap="onCancelFirmwareInput">×</text>
+    </view>
+    <view class="modal-body">
+      <input 
+        class="url-input" 
+        type="text" 
+        placeholder="请输入固件下载地址"
+        value="{{firmwareUrl}}"
+        bindinput="onFirmwareUrlInput"
+      />
+      <view class="modal-btn-group">
+        <button class="btn btn-small btn-default" bindtap="onCancelFirmwareInput">取消</button>
+        <button class="btn btn-small btn-primary" bindtap="onConfirmFirmwareUrl">确定</button>
+      </view>
+    </view>
+  </view>
+</view>
