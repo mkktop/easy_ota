@@ -1,7 +1,8 @@
 const btManager = require('./bluetooth')
 
 const OTA = {
-  OTA_START_CMD: '5D6C00007E5A',
+  FRAME_HEAD: '5D6C',
+  FRAME_TAIL: '7E5A',
   OTA_ACK_CMD: '5D6CAABBCC7E5A',
   CHUNK_SIZE: 256,
   CHUNK_DELAY: 150,
@@ -22,6 +23,40 @@ const OTA = {
     this.firmwareData = data
     this.firmwareName = name || '未知文件'
     this.firmwareUrl = ''
+  },
+
+  buildOtaStartCmd(firmwareSize) {
+    const sizeHex = this.sizeToBigEndianHex(firmwareSize)
+    const dataLen = sizeHex.length / 2
+    const lenHex = this.byteToHex(dataLen)
+    const cmd = this.FRAME_HEAD + lenHex + sizeHex + this.FRAME_TAIL
+    console.log('构建OTA启动命令, 固件大小:', firmwareSize, '数据长度:', dataLen, '命令:', cmd)
+    return cmd
+  },
+
+  sizeToLittleEndianHex(size) {
+    if (size === 0) return '00'
+    let hex = ''
+    while (size > 0) {
+      const byte = size & 0xFF
+      hex += this.byteToHex(byte)
+      size = size >> 8
+    }
+    return hex
+  },
+
+  sizeToBigEndianHex(size) {
+    if (size === 0) return '00'
+    let bytes = []
+    while (size > 0) {
+      bytes.unshift(size & 0xFF)
+      size = size >> 8
+    }
+    return bytes.map(b => this.byteToHex(b)).join('')
+  },
+
+  byteToHex(byte) {
+    return ('00' + byte.toString(16)).slice(-2).toUpperCase()
   },
 
   chooseFile() {
@@ -135,9 +170,12 @@ const OTA = {
           throw new Error('请先选择或下载固件文件')
         }
         
+        const firmwareSize = this.firmwareData.byteLength
+        const otaStartCmd = this.buildOtaStartCmd(firmwareSize)
+        
         this.updateStatus('发送OTA启动命令...')
-        console.log('发送OTA启动命令:', this.OTA_START_CMD)
-        await btManager.write(this.OTA_START_CMD)
+        console.log('发送OTA启动命令:', otaStartCmd)
+        await btManager.write(otaStartCmd)
         this.updateStatus('等待设备响应...')
         
         const ackReceived = await this.waitForAck(10000)
