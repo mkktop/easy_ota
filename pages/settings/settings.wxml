@@ -1,5 +1,5 @@
-<navigation-bar title="特征值设置" back="{{true}}" color="black" background="#FFF"></navigation-bar>
-<scroll-view class="scrollarea" scroll-y type="list">
+<navigation-bar title="设置" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y scroll-anchoring="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
   <view class="container">
     <view class="status-card">
       <view class="status-row">
@@ -10,9 +10,55 @@
       </view>
     </view>
 
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">OTA传输设置</text>
+      </view>
+      <view class="ota-settings">
+        <view class="setting-item">
+          <view class="setting-label">
+            <text class="label-text">分包大小</text>
+            <text class="label-unit">(字节)</text>
+          </view>
+          <view class="setting-input-wrap">
+            <input 
+              class="setting-input" 
+              type="number" 
+              value="{{chunkSize}}"
+              bindinput="onChunkSizeInput"
+              placeholder="1-512"
+            />
+          </view>
+        </view>
+        <view class="setting-hint">每包数据大小，范围: 1-512 字节，默认: {{defaultChunkSize}}</view>
+        
+        <view class="setting-item">
+          <view class="setting-label">
+            <text class="label-text">包间隔</text>
+            <text class="label-unit">(毫秒)</text>
+          </view>
+          <view class="setting-input-wrap">
+            <input 
+              class="setting-input" 
+              type="number" 
+              value="{{chunkDelay}}"
+              bindinput="onChunkDelayInput"
+              placeholder="0-1000"
+            />
+          </view>
+        </view>
+        <view class="setting-hint">每包发送间隔，范围: 0-1000 毫秒，默认: {{defaultChunkDelay}}</view>
+        
+        <view class="setting-btn-group">
+          <button class="btn-reset" bindtap="onResetOtaSettings">重置默认</button>
+          <button class="btn-save-ota" bindtap="onSaveOtaSettings">保存设置</button>
+        </view>
+      </view>
+    </view>
+
     <view class="section" wx:if="{{isConnected}}">
       <view class="section-header">
-        <text class="section-title">当前配置</text>
+        <text class="section-title">当前特征值配置</text>
       </view>
       <view class="current-config">
         <view class="config-row">
@@ -32,7 +78,7 @@
 
     <view class="section" wx:if="{{isConnected}}">
       <view class="section-header">
-        <text class="section-title">自定义配置</text>
+        <text class="section-title">自定义特征值</text>
         <button class="btn-refresh" bindtap="onRefresh" disabled="{{loading}}">
           刷新
         </button>
@@ -78,7 +124,7 @@
       </view>
 
       <button class="btn-save" bindtap="onSaveSettings" disabled="{{loading || !selectedWriteCharId}}">
-        {{loading ? '保存中...' : '保存设置'}}
+        {{loading ? '保存中...' : '保存特征值设置'}}
       </button>
     </view>
 

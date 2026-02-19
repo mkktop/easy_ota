@@ -1,4 +1,5 @@
 const btManager = require('../../utils/bluetooth')
+const ota = require('../../utils/ota')
 
 Component({
   data: {
@@ -13,12 +14,17 @@ Component({
     currentWriteCharId: '',
     currentNotifyCharId: '',
     isConnected: false,
-    loading: false
+    loading: false,
+    chunkSize: 256,
+    chunkDelay: 150,
+    defaultChunkSize: 256,
+    defaultChunkDelay: 150
   },
 
   lifetimes: {
     attached() {
       this.loadBluetoothInfo()
+      this.loadOtaSettings()
     }
   },
 
@@ -41,6 +47,57 @@ Component({
       } else if (isConnected) {
         this.refreshServices()
       }
+    },
+
+    loadOtaSettings() {
+      const settings = ota.getOtaSettings()
+      this.setData({
+        chunkSize: settings.chunkSize,
+        chunkDelay: settings.chunkDelay,
+        defaultChunkSize: settings.defaultChunkSize,
+        defaultChunkDelay: settings.defaultChunkDelay
+      })
+    },
+
+    onChunkSizeInput(e) {
+      let value = parseInt(e.detail.value) || 0
+      if (value > 512) value = 512
+      if (value < 1) value = 1
+      this.setData({ chunkSize: value })
+    },
+
+    onChunkDelayInput(e) {
+      let value = parseInt(e.detail.value) || 0
+      if (value > 1000) value = 1000
+      if (value < 0) value = 0
+      this.setData({ chunkDelay: value })
+    },
+
+    onSaveOtaSettings() {
+      const { chunkSize, chunkDelay } = this.data
+      
+      if (chunkSize < 1 || chunkSize > 512) {
+        wx.showToast({ title: '分包大小范围: 1-512', icon: 'none' })
+        return
+      }
+      
+      if (chunkDelay < 0 || chunkDelay > 1000) {
+        wx.showToast({ title: '包间隔范围: 0-1000ms', icon: 'none' })
+        return
+      }
+      
+      ota.setChunkSize(chunkSize)
+      ota.setChunkDelay(chunkDelay)
+      wx.showToast({ title: 'OTA设置已保存', icon: 'success' })
+    },
+
+    onResetOtaSettings() {
+      ota.resetToDefaults()
+      this.setData({
+        chunkSize: this.data.defaultChunkSize,
+        chunkDelay: this.data.defaultChunkDelay
+      })
+      wx.showToast({ title: '已重置为默认值', icon: 'success' })
     },
 
     refreshServices() {

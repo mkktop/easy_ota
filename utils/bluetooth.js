@@ -410,12 +410,12 @@ const BluetoothManager = {
           writeNext()
         },
         fail: (err) => {
-          console.error('分包写入失败', err)
           if (err.errCode === 10008) {
-            console.log('错误码10008, 继续发送下一包')
+            console.log('iOS已知问题10008, 数据已发送, 继续下一包, 偏移:', offset)
             offset = end
             writeNext()
           } else {
+            console.error('分包写入失败', err)
             reject(err)
           }
         }

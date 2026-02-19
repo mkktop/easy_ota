@@ -1,5 +1,5 @@
 <navigation-bar title="蓝牙OTA升级" back="{{false}}" color="black" background="#FFF"></navigation-bar>
-<scroll-view class="scrollarea" scroll-y type="list">
+<scroll-view class="scrollarea" scroll-y scroll-anchoring="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
   <view class="container">
     <view class="status-card">
       <view class="status-icon {{isConnected ? 'connected' : 'disconnected'}}">
@@ -97,7 +97,7 @@
       <text class="modal-title">选择蓝牙设备</text>
       <text class="modal-close" bindtap="onCloseDeviceList">×</text>
     </view>
-    <view class="modal-body">
+    <scroll-view class="modal-body" scroll-y enhanced="{{true}}" show-scrollbar="{{false}}">
       <view class="scanning-tip" wx:if="{{isScanning}}">
         <text>正在搜索...</text>
         <button class="btn-small" bindtap="onStopScan">停止搜索</button>
@@ -116,7 +116,7 @@
       <view class="empty-tip" wx:else>
         <text>暂未发现设备</text>
       </view>
-    </view>
+    </scroll-view>
   </view>
 </view>
 

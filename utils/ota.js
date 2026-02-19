@@ -6,12 +6,51 @@ const OTA = {
   OTA_ACK_CMD: '5D6CAABBCC7E5A',
   CHUNK_SIZE: 256,
   CHUNK_DELAY: 150,
+  DEFAULT_CHUNK_SIZE: 256,
+  DEFAULT_CHUNK_DELAY: 150,
   firmwareUrl: '',
   firmwareData: null,
   firmwareName: '',
   onProgressCallback: null,
   onStatusCallback: null,
   isUpgrading: false,
+
+  setChunkSize(size) {
+    if (size && size > 0 && size <= 512) {
+      this.CHUNK_SIZE = size
+      console.log('设置分包大小:', size)
+    }
+  },
+
+  setChunkDelay(delay) {
+    if (delay !== undefined && delay >= 0 && delay <= 1000) {
+      this.CHUNK_DELAY = delay
+      console.log('设置包间隔:', delay)
+    }
+  },
+
+  getChunkSize() {
+    return this.CHUNK_SIZE
+  },
+
+  getChunkDelay() {
+    return this.CHUNK_DELAY
+  },
+
+  resetToDefaults() {
+    this.CHUNK_SIZE = this.DEFAULT_CHUNK_SIZE
+    this.CHUNK_DELAY = this.DEFAULT_CHUNK_DELAY
+    console.log('重置为默认值: 分包大小=', this.CHUNK_SIZE, '包间隔=', this.CHUNK_DELAY)
+  },
+
+  getOtaSettings() {
+    return {
+      chunkSize: this.CHUNK_SIZE,
+      chunkDelay: this.CHUNK_DELAY,
+      defaultChunkSize: this.DEFAULT_CHUNK_SIZE,
+      defaultChunkDelay: this.DEFAULT_CHUNK_DELAY
+    }
+  },
 
   setFirmwareUrl(url) {
     this.firmwareUrl = url

@@ -1,5 +1,5 @@
 page {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
@@ -7,11 +7,12 @@ page {
 
 .scrollarea {
   flex: 1;
-  overflow-y: hidden;
+  width: 100%;
 }
 
 .container {
   padding: 30rpx;
+  padding-bottom: 50rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,6 +28,8 @@ page {
   align-items: center;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
   margin-bottom: 30rpx;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .status-icon {
@@ -71,6 +74,7 @@ page {
   justify-content: center;
   gap: 20rpx;
   margin-bottom: 30rpx;
+  flex-shrink: 0;
 }
 
 .btn {
@@ -139,6 +143,8 @@ page {
   border-radius: 20rpx;
   padding: 30rpx;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .section-title {
@@ -274,8 +280,7 @@ page {
 
 .modal-body {
   padding: 20rpx;
-  max-height: 50vh;
-  overflow-y: auto;
+  height: 400rpx;
 }
 
 .scanning-tip {
