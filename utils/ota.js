@@ -8,6 +8,8 @@ const OTA = {
   CHUNK_DELAY: 150,
   DEFAULT_CHUNK_SIZE: 256,
   DEFAULT_CHUNK_DELAY: 150,
+  MAX_CHUNK_SIZE: 4096,
+  MAX_CHUNK_DELAY: 10000,
   firmwareUrl: '',
   firmwareData: null,
   firmwareName: '',
@@ -16,14 +18,14 @@ const OTA = {
   isUpgrading: false,
 
   setChunkSize(size) {
-    if (size && size > 0 && size <= 512) {
+    if (size && size > 0 && size <= this.MAX_CHUNK_SIZE) {
       this.CHUNK_SIZE = size
       console.log('设置分包大小:', size)
     }
   },
 
   setChunkDelay(delay) {
-    if (delay !== undefined && delay >= 0 && delay <= 1000) {
+    if (delay !== undefined && delay >= 0 && delay <= this.MAX_CHUNK_DELAY) {
       this.CHUNK_DELAY = delay
       console.log('设置包间隔:', delay)
     }
@@ -48,7 +50,9 @@ const OTA = {
       chunkSize: this.CHUNK_SIZE,
       chunkDelay: this.CHUNK_DELAY,
       defaultChunkSize: this.DEFAULT_CHUNK_SIZE,
-      defaultChunkDelay: this.DEFAULT_CHUNK_DELAY
+      defaultChunkDelay: this.DEFAULT_CHUNK_DELAY,
+      maxChunkSize: this.MAX_CHUNK_SIZE,
+      maxChunkDelay: this.MAX_CHUNK_DELAY
     }
   },
 

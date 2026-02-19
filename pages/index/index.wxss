@@ -249,7 +249,8 @@ page {
 
 .modal-content {
   position: relative;
-  width: 85%;
+  width: 90%;
+  max-width: 90%;
   max-height: 70vh;
   background: #fff;
   border-radius: 20rpx;
@@ -264,6 +265,7 @@ page {
   align-items: center;
   padding: 30rpx;
   border-bottom: 1rpx solid #eee;
+  box-sizing: border-box;
 }
 
 .modal-title {
@@ -280,7 +282,9 @@ page {
 
 .modal-body {
   padding: 20rpx;
-  height: 400rpx;
+  height: 600rpx;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .scanning-tip {
@@ -291,21 +295,25 @@ page {
   background: #e3f2fd;
   border-radius: 12rpx;
   margin-bottom: 20rpx;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .device-list {
   display: flex;
   flex-direction: column;
   gap: 15rpx;
+  width: 100%;
 }
 
 .device-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding: 25rpx 20rpx;
   background: #f9f9f9;
   border-radius: 12rpx;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .device-item:active {
@@ -316,6 +324,8 @@ page {
   font-size: 30rpx;
   color: #333;
   font-weight: 500;
+  margin-bottom: 8rpx;
+  word-break: break-all;
 }
 
 .device-rssi {

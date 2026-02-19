@@ -18,7 +18,9 @@ Component({
     chunkSize: 256,
     chunkDelay: 150,
     defaultChunkSize: 256,
-    defaultChunkDelay: 150
+    defaultChunkDelay: 150,
+    maxChunkSize: 4096,
+    maxChunkDelay: 10000
   },
 
   lifetimes: {
@@ -55,34 +57,36 @@ Component({
         chunkSize: settings.chunkSize,
         chunkDelay: settings.chunkDelay,
         defaultChunkSize: settings.defaultChunkSize,
-        defaultChunkDelay: settings.defaultChunkDelay
+        defaultChunkDelay: settings.defaultChunkDelay,
+        maxChunkSize: settings.maxChunkSize,
+        maxChunkDelay: settings.maxChunkDelay
       })
     },
 
     onChunkSizeInput(e) {
       let value = parseInt(e.detail.value) || 0
-      if (value > 512) value = 512
+      if (value > this.data.maxChunkSize) value = this.data.maxChunkSize
       if (value < 1) value = 1
       this.setData({ chunkSize: value })
     },
 
     onChunkDelayInput(e) {
       let value = parseInt(e.detail.value) || 0
-      if (value > 1000) value = 1000
+      if (value > this.data.maxChunkDelay) value = this.data.maxChunkDelay
       if (value < 0) value = 0
       this.setData({ chunkDelay: value })
     },
 
     onSaveOtaSettings() {
-      const { chunkSize, chunkDelay } = this.data
+      const { chunkSize, chunkDelay, maxChunkSize, maxChunkDelay } = this.data
       
-      if (chunkSize < 1 || chunkSize > 512) {
-        wx.showToast({ title: '分包大小范围: 1-512', icon: 'none' })
+      if (chunkSize < 1 || chunkSize > maxChunkSize) {
+        wx.showToast({ title: '分包大小范围: 1-' + maxChunkSize, icon: 'none' })
         return
       }
       
-      if (chunkDelay < 0 || chunkDelay > 1000) {
-        wx.showToast({ title: '包间隔范围: 0-1000ms', icon: 'none' })
+      if (chunkDelay < 0 || chunkDelay > maxChunkDelay) {
+        wx.showToast({ title: '包间隔范围: 0-' + maxChunkDelay + 'ms', icon: 'none' })
         return
       }
       
