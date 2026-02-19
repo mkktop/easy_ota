@@ -1,0 +1,97 @@
+<navigation-bar title="特征值设置" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <view class="status-card">
+      <view class="status-row">
+        <text class="label">连接状态:</text>
+        <text class="value {{isConnected ? 'connected' : 'disconnected'}}">
+          {{isConnected ? '已连接' : '未连接'}}
+        </text>
+      </view>
+    </view>
+
+    <view class="section" wx:if="{{isConnected}}">
+      <view class="section-header">
+        <text class="section-title">当前配置</text>
+      </view>
+      <view class="current-config">
+        <view class="config-row">
+          <text class="config-label">服务UUID:</text>
+          <text class="config-value">{{currentServiceId || '未设置'}}</text>
+        </view>
+        <view class="config-row">
+          <text class="config-label">写入特征值:</text>
+          <text class="config-value">{{currentWriteCharId || '未设置'}}</text>
+        </view>
+        <view class="config-row">
+          <text class="config-label">通知特征值:</text>
+          <text class="config-value">{{currentNotifyCharId || '未设置'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section" wx:if="{{isConnected}}">
+      <view class="section-header">
+        <text class="section-title">自定义配置</text>
+        <button class="btn-refresh" bindtap="onRefresh" disabled="{{loading}}">
+          刷新
+        </button>
+      </view>
+
+      <view class="picker-group">
+        <view class="picker-item">
+          <text class="picker-label">写入特征值:</text>
+          <picker 
+            mode="selector" 
+            range="{{writeCharacteristics}}" 
+            range-key="uuid"
+            bindchange="onWriteCharChange">
+            <view class="picker-value">
+              {{selectedWriteCharId || '请选择'}}
+            </view>
+          </picker>
+        </view>
+
+        <view class="picker-item">
+          <text class="picker-label">通知特征值:</text>
+          <picker 
+            mode="selector" 
+            range="{{notifyCharacteristics}}" 
+            range-key="uuid"
+            bindchange="onNotifyCharChange">
+            <view class="picker-value">
+              {{selectedNotifyCharId || '请选择'}}
+            </view>
+          </picker>
+        </view>
+
+        <view class="picker-item">
+          <text class="picker-label">服务UUID:</text>
+          <view class="picker-value disabled">
+            {{selectedServiceId || '自动匹配'}}
+          </view>
+        </view>
+      </view>
+
+      <view class="tip-text">
+        提示：选择写入特征值时会自动匹配对应的服务UUID
+      </view>
+
+      <button class="btn-save" bindtap="onSaveSettings" disabled="{{loading || !selectedWriteCharId}}">
+        {{loading ? '保存中...' : '保存设置'}}
+      </button>
+    </view>
+
+    <view class="section" wx:if="{{!isConnected}}">
+      <view class="empty-tip">
+        <text>请先在首页连接蓝牙设备</text>
+      </view>
+    </view>
+
+    <view class="section" wx:if="{{isConnected && writeCharacteristics.length === 0 && !loading}}">
+      <view class="empty-tip">
+        <text>未找到可用的特征值，请点击刷新重试</text>
+      </view>
+    </view>
+  </view>
+</scroll-view>

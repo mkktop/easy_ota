@@ -116,6 +116,12 @@ page {
   border: 2rpx solid #2196F3;
 }
 
+.btn-settings {
+  flex: 0 0 auto;
+  width: 160rpx;
+  margin-left: 20rpx;
+}
+
 .btn-small {
   height: 60rpx;
   font-size: 26rpx;

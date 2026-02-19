@@ -107,10 +107,17 @@ Component({
             otaStatus: '已连接: ' + device.name
           })
           wx.showToast({ title: '连接成功', icon: 'success' })
+          return btManager.getAllServicesAndCharacteristics()
+        })
+        .then((result) => {
+          console.log('获取所有服务和特征值成功', result)
         })
         .catch((err) => {
-          wx.showToast({ title: '连接失败', icon: 'error' })
-          this.setData({ otaStatus: '连接失败' })
+          console.error('连接或获取服务失败', err)
+          if (!this.data.isConnected) {
+            wx.showToast({ title: '连接失败', icon: 'error' })
+            this.setData({ otaStatus: '连接失败' })
+          }
         })
     },
 
@@ -124,6 +131,12 @@ Component({
         isUpgrading: false
       })
       wx.showToast({ title: '已断开连接', icon: 'none' })
+    },
+
+    onGoToSettings() {
+      wx.navigateTo({
+        url: '/pages/settings/settings'
+      })
     },
 
     onChooseFile() {

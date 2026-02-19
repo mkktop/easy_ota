@@ -7,6 +7,8 @@ const BluetoothManager = {
   onReceiveCallback: null,
   mtu: 20,
   writeWithResponse: false,
+  allServices: [],
+  allCharacteristics: [],
 
   init() {
     return new Promise((resolve, reject) => {
@@ -100,6 +102,10 @@ const BluetoothManager = {
         deviceId: this.deviceId,
         success: (res) => {
           console.log('获取服务列表成功:', res.services)
+          this.allServices = res.services.map(s => ({
+            uuid: s.uuid,
+            isPrimary: s.isPrimary
+          }))
           
           let ffe1Service = null
           let ffe2Service = null
@@ -140,6 +146,87 @@ const BluetoothManager = {
           reject(err)
         }
       })
+    })
+  },
+
+  getAllServicesAndCharacteristics() {
+    return new Promise((resolve, reject) => {
+      wx.getBLEDeviceServices({
+        deviceId: this.deviceId,
+        success: async (res) => {
+          console.log('获取所有服务列表成功:', res.services)
+          this.allServices = res.services.map(s => ({
+            uuid: s.uuid,
+            isPrimary: s.isPrimary
+          }))
+          
+          this.allCharacteristics = []
+          
+          for (let i = 0; i < res.services.length; i++) {
+            const service = res.services[i]
+            try {
+              const charRes = await new Promise((res2, rej2) => {
+                wx.getBLEDeviceCharacteristics({
+                  deviceId: this.deviceId,
+                  serviceId: service.uuid,
+                  success: res2,
+                  fail: rej2
+                })
+              })
+              
+              const chars = charRes.characteristics.map(c => ({
+                uuid: c.uuid,
+                serviceUuid: service.uuid,
+                properties: {
+                  read: c.properties.read || false,
+                  write: c.properties.write || false,
+                  writeNoResponse: c.properties.writeNoResponse || false,
+                  notify: c.properties.notify || false,
+                  indicate: c.properties.indicate || false
+                }
+              }))
+              
+              this.allCharacteristics.push(...chars)
+              console.log('服务', service.uuid, '的特征值:', chars)
+            } catch (err) {
+              console.error('获取服务特征值失败:', service.uuid, err)
+            }
+          }
+          
+          resolve({
+            services: this.allServices,
+            characteristics: this.allCharacteristics
+          })
+        },
+        fail: (err) => {
+          console.error('获取服务列表失败', err)
+          reject(err)
+        }
+      })
+    })
+  },
+
+  setCustomCharacteristics(serviceId, writeCharId, notifyCharId) {
+    return new Promise((resolve, reject) => {
+      this.serviceId = serviceId
+      this.writeCharacteristicId = writeCharId
+      this.notifyCharacteristicId = notifyCharId
+      
+      const writeChar = this.allCharacteristics.find(c => c.uuid === writeCharId)
+      if (writeChar) {
+        this.writeWithResponse = writeChar.properties.write || false
+      }
+      
+      console.log('设置自定义特征值:')
+      console.log('服务UUID:', this.serviceId)
+      console.log('写入特征值:', this.writeCharacteristicId)
+      console.log('通知特征值:', this.notifyCharacteristicId)
+      
+      if (this.notifyCharacteristicId) {
+        this.enableNotify().then(resolve).catch(reject)
+      } else {
+        resolve()
+      }
     })
   },
 
@@ -349,6 +436,8 @@ const BluetoothManager = {
             this.serviceId = null
             this.writeCharacteristicId = null
             this.notifyCharacteristicId = null
+            this.allServices = []
+            this.allCharacteristics = []
             console.log('断开蓝牙连接')
             resolve()
           },

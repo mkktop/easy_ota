@@ -24,6 +24,13 @@
         wx:else>
         断开连接
       </button>
+      <button 
+        class="btn btn-outline btn-settings" 
+        bindtap="onGoToSettings"
+        disabled="{{isUpgrading}}"
+        wx:if="{{isConnected}}">
+        设置
+      </button>
     </view>
 
     <view class="ota-section" wx:if="{{isConnected}}">
