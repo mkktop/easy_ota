@@ -16,7 +16,8 @@ Component({
     firmwareName: '',
     firmwareSize: 0,
     firmwareSource: '',
-    showFirmwareInput: false
+    showFirmwareInput: false,
+    showTipModal: false
   },
 
   lifetimes: {
@@ -137,6 +138,14 @@ Component({
       wx.navigateTo({
         url: '/pages/settings/settings'
       })
+    },
+
+    onShowTip() {
+      this.setData({ showTipModal: true })
+    },
+
+    onCloseTipModal() {
+      this.setData({ showTipModal: false })
     },
 
     onChooseFile() {

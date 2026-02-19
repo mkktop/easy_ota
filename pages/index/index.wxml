@@ -1,89 +1,119 @@
-<navigation-bar title="蓝牙OTA升级" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<navigation-bar title="蓝牙OTA升级" back="{{false}}" color="white" background="transparent"></navigation-bar>
 <scroll-view class="scrollarea" scroll-y scroll-anchoring="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
   <view class="container">
-    <view class="status-card">
-      <view class="status-icon {{isConnected ? 'connected' : 'disconnected'}}">
-        <text class="icon-text">BT</text>
+    <view class="header-section">
+      <view class="header-content">
+        <view class="status-icon-wrapper {{isConnected ? 'connected' : 'disconnected'}}">
+          <view class="status-icon">
+            <view class="bluetooth-icon">
+              <view class="bt-body"></view>
+              <view class="bt-top"></view>
+              <view class="bt-bottom"></view>
+            </view>
+          </view>
+          <view class="pulse-ring" wx:if="{{isConnected}}"></view>
+        </view>
+        <text class="status-title">{{isConnected ? '设备已连接' : '等待连接'}}</text>
+        <text class="device-name" wx:if="{{connectedDevice}}">{{connectedDevice.name}}</text>
+        <view class="status-badge {{isConnected ? 'connected' : 'disconnected'}}">
+          <view class="badge-dot"></view>
+          <text>{{isConnected ? '在线' : '离线'}}</text>
+        </view>
       </view>
-      <text class="status-text">{{isConnected ? '已连接' : '未连接'}}</text>
-      <text class="device-name" wx:if="{{connectedDevice}}">{{connectedDevice.name}}</text>
     </view>
 
-    <view class="btn-group">
-      <button 
-        class="btn btn-primary" 
-        bindtap="onConnectBluetooth"
-        disabled="{{isUpgrading}}"
-        wx:if="{{!isConnected}}">
-        连接蓝牙
-      </button>
-      <button 
-        class="btn btn-danger" 
-        bindtap="onDisconnect"
-        disabled="{{isUpgrading}}"
-        wx:else>
-        断开连接
-      </button>
-      <button 
-        class="btn btn-outline btn-settings" 
-        bindtap="onGoToSettings"
-        disabled="{{isUpgrading}}"
-        wx:if="{{isConnected}}">
-        设置
-      </button>
+    <view class="action-section">
+      <view class="btn-group" wx:if="{{!isConnected}}">
+        <button class="btn btn-primary" bindtap="onConnectBluetooth" disabled="{{isUpgrading}}">
+          <text class="btn-icon">🔍</text>
+          <text>搜索设备</text>
+        </button>
+      </view>
+      <view class="btn-group btn-group-row" wx:if="{{!isConnected}}">
+        <button class="btn btn-outline btn-tip" bindtap="onShowTip">
+          <text class="btn-icon">💡</text>
+          <text>使用提示</text>
+        </button>
+      </view>
+      
+      <view class="btn-group" wx:else>
+        <button class="btn btn-danger" bindtap="onDisconnect" disabled="{{isUpgrading}}">
+          <text class="btn-icon">❌</text>
+          <text>断开连接</text>
+        </button>
+        <button class="btn btn-outline btn-settings" bindtap="onGoToSettings" disabled="{{isUpgrading}}">
+          <text class="btn-icon">⚙️</text>
+          <text>设置</text>
+        </button>
+      </view>
     </view>
 
     <view class="ota-section" wx:if="{{isConnected}}">
-      <view class="section-title">OTA升级</view>
+      <view class="section-header">
+        <view class="section-icon">📦</view>
+        <text class="section-title">固件升级</text>
+      </view>
       
-      <view class="firmware-info">
-        <view class="firmware-row">
-          <text class="info-label">固件来源:</text>
-          <text class="info-value">{{firmwareSource || '未选择'}}</text>
+      <view class="firmware-card">
+        <view class="firmware-header">
+          <text class="firmware-label">固件信息</text>
+          <text class="firmware-source {{firmwareSource ? 'active' : ''}}">{{firmwareSource || '未选择'}}</text>
         </view>
-        <view class="firmware-row" wx:if="{{firmwareName}}">
-          <text class="info-label">文件名:</text>
-          <text class="info-value">{{firmwareName}}</text>
+        <view class="firmware-details" wx:if="{{firmwareName}}">
+          <view class="detail-item">
+            <text class="detail-label">文件名</text>
+            <text class="detail-value">{{firmwareName}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{firmwareSize > 0}}">
+            <text class="detail-label">大小</text>
+            <text class="detail-value">{{firmwareSize}} 字节</text>
+          </view>
         </view>
-        <view class="firmware-row" wx:if="{{firmwareSize > 0}}">
-          <text class="info-label">大小:</text>
-          <text class="info-value">{{firmwareSize}} 字节</text>
+        <view class="firmware-empty" wx:else>
+          <text class="empty-icon">📁</text>
+          <text class="empty-text">请选择固件文件</text>
         </view>
       </view>
 
       <view class="btn-group firmware-btns">
-        <button class="btn btn-small btn-outline" bindtap="onChooseFile" disabled="{{isUpgrading}}">
-          选择文件
+        <button class="btn btn-outline btn-icon-btn" bindtap="onChooseFile" disabled="{{isUpgrading}}">
+          <text class="btn-icon">📄</text>
+          <text>选择文件</text>
         </button>
-        <button class="btn btn-small btn-outline" bindtap="onShowFirmwareInput" disabled="{{isUpgrading}}">
-          输入链接
+        <button class="btn btn-outline btn-icon-btn" bindtap="onShowFirmwareInput" disabled="{{isUpgrading}}">
+          <text class="btn-icon">🔗</text>
+          <text>输入链接</text>
         </button>
       </view>
 
       <view class="progress-section" wx:if="{{isUpgrading}}">
+        <view class="progress-header">
+          <text class="progress-label">升级进度</text>
+          <text class="progress-percent">{{otaProgress}}%</text>
+        </view>
         <view class="progress-bar">
           <view class="progress-fill" style="width: {{otaProgress}}%"></view>
+          <view class="progress-glow" style="left: {{otaProgress}}%"></view>
         </view>
-        <text class="progress-text">{{otaProgress}}%</text>
+        <view class="progress-status">
+          <text class="status-icon-animate">⚡</text>
+          <text class="status-text">{{otaStatus || '准备中...'}}</text>
+        </view>
       </view>
 
-      <view class="status-info">
-        <text>{{otaStatus || '准备就绪'}}</text>
+      <view class="status-info" wx:else>
+        <text class="status-dot {{firmwareSource ? 'ready' : ''}}"></text>
+        <text>{{otaStatus || (firmwareSource ? '准备就绪，可以开始升级' : '请先选择固件文件')}}</text>
       </view>
 
-      <view class="btn-group">
-        <button 
-          class="btn btn-success" 
-          bindtap="onStartOTA"
-          disabled="{{isUpgrading}}"
-          wx:if="{{!isUpgrading}}">
-          开始升级
+      <view class="btn-group action-btns">
+        <button class="btn btn-success btn-large" bindtap="onStartOTA" disabled="{{isUpgrading || !firmwareSource}}" wx:if="{{!isUpgrading}}">
+          <text class="btn-icon">🚀</text>
+          <text>开始升级</text>
         </button>
-        <button 
-          class="btn btn-warning" 
-          bindtap="onCancelOTA"
-          wx:else>
-          取消升级
+        <button class="btn btn-warning btn-large" bindtap="onCancelOTA" wx:else>
+          <text class="btn-icon">⏹️</text>
+          <text>取消升级</text>
         </button>
       </view>
     </view>
@@ -139,6 +169,41 @@
         <button class="btn btn-small btn-default" bindtap="onCancelFirmwareInput">取消</button>
         <button class="btn btn-small btn-primary" bindtap="onConfirmFirmwareUrl">确定</button>
       </view>
+    </view>
+  </view>
+</view>
+
+<view class="tip-modal" wx:if="{{showTipModal}}">
+  <view class="modal-mask" bindtap="onCloseTipModal"></view>
+  <view class="modal-content tip-modal-content">
+    <view class="modal-header">
+      <text class="modal-title">💡 使用提示</text>
+      <text class="modal-close" bindtap="onCloseTipModal">×</text>
+    </view>
+    <view class="modal-body tip-body">
+      <view class="tip-item">
+        <view class="tip-num">1</view>
+        <text class="tip-desc">点击"搜索设备"按钮，扫描附近的蓝牙设备</text>
+      </view>
+      <view class="tip-item">
+        <view class="tip-num">2</view>
+        <text class="tip-desc">从设备列表中选择要升级的目标设备</text>
+      </view>
+      <view class="tip-item">
+        <view class="tip-num">3</view>
+        <text class="tip-desc">连接成功后，选择固件文件或输入固件下载链接</text>
+      </view>
+      <view class="tip-item">
+        <view class="tip-num">4</view>
+        <text class="tip-desc">点击"开始升级"按钮，等待升级完成</text>
+      </view>
+      <view class="tip-item">
+        <view class="tip-num">5</view>
+        <text class="tip-desc">如需自定义特征值或传输参数，请点击"设置"按钮</text>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <button class="btn btn-primary btn-block" bindtap="onCloseTipModal">我知道了</button>
     </view>
   </view>
 </view>
