@@ -1,8 +1,11 @@
 const btManager = require('../../utils/bluetooth')
-const ota = require('../../utils/ota')
+const themeManager = require('../../utils/theme')
 
 Component({
   data: {
+    themeGradient: '',
+    themes: [],
+    currentThemeId: '',
     services: [],
     characteristics: [],
     writeCharacteristics: [],
@@ -14,25 +17,34 @@ Component({
     currentWriteCharId: '',
     currentNotifyCharId: '',
     isConnected: false,
-    loading: false,
-    chunkSize: 256,
-    chunkDelay: 100,
-    defaultChunkSize: 256,
-    defaultChunkDelay: 100,
-    maxChunkSize: 4096,
-    maxChunkDelay: 10000,
-    handshakeEnabled: true,
-    defaultHandshakeEnabled: true
+    loading: false
   },
 
   lifetimes: {
     attached() {
+      this.loadThemes()
       this.loadBluetoothInfo()
-      this.loadOtaSettings()
+    }
+  },
+
+  pageLifetimes: {
+    show() {
+      this.loadThemes()
+      this.loadBluetoothInfo()
     }
   },
 
   methods: {
+    loadThemes() {
+      const themes = themeManager.getAllThemes()
+      const currentTheme = themeManager.getTheme()
+      this.setData({
+        themes,
+        currentThemeId: currentTheme.id,
+        themeGradient: currentTheme.gradient
+      })
+    },
+
     loadBluetoothInfo() {
       const isConnected = btManager.isConnected
       this.setData({
@@ -53,66 +65,15 @@ Component({
       }
     },
 
-    loadOtaSettings() {
-      const settings = ota.getOtaSettings()
+    onThemeChange(e) {
+      const themeId = e.currentTarget.dataset.id
+      themeManager.setTheme(themeId)
+      const theme = themeManager.getTheme()
       this.setData({
-        chunkSize: settings.chunkSize,
-        chunkDelay: settings.chunkDelay,
-        defaultChunkSize: settings.defaultChunkSize,
-        defaultChunkDelay: settings.defaultChunkDelay,
-        maxChunkSize: settings.maxChunkSize,
-        maxChunkDelay: settings.maxChunkDelay,
-        handshakeEnabled: settings.handshakeEnabled,
-        defaultHandshakeEnabled: settings.defaultHandshakeEnabled
+        currentThemeId: themeId,
+        themeGradient: theme.gradient
       })
-    },
-
-    onChunkSizeInput(e) {
-      let value = parseInt(e.detail.value) || 0
-      if (value > this.data.maxChunkSize) value = this.data.maxChunkSize
-      if (value < 1) value = 1
-      this.setData({ chunkSize: value })
-    },
-
-    onChunkDelayInput(e) {
-      let value = parseInt(e.detail.value) || 0
-      if (value > this.data.maxChunkDelay) value = this.data.maxChunkDelay
-      if (value < 0) value = 0
-      this.setData({ chunkDelay: value })
-    },
-
-    onHandshakeChange(e) {
-      this.setData({ handshakeEnabled: e.detail.value })
-    },
-
-    onSaveOtaSettings() {
-      const { chunkSize, chunkDelay, maxChunkSize, maxChunkDelay, handshakeEnabled } = this.data
-      
-      if (chunkSize < 1 || chunkSize > maxChunkSize) {
-        wx.showToast({ title: '分包大小范围: 1-' + maxChunkSize, icon: 'none' })
-        return
-      }
-      
-      if (chunkDelay < 0 || chunkDelay > maxChunkDelay) {
-        wx.showToast({ title: '包间隔范围: 0-' + maxChunkDelay + 'ms', icon: 'none' })
-        return
-      }
-      
-      ota.setChunkSize(chunkSize)
-      ota.setChunkDelay(chunkDelay)
-      ota.setHandshakeEnabled(handshakeEnabled)
-      wx.showToast({ title: 'OTA设置已保存', icon: 'success' })
-    },
-
-    onResetOtaSettings() {
-      ota.resetToDefaults()
-      const settings = ota.getOtaSettings()
-      this.setData({
-        chunkSize: settings.defaultChunkSize,
-        chunkDelay: settings.defaultChunkDelay,
-        handshakeEnabled: settings.defaultHandshakeEnabled
-      })
-      wx.showToast({ title: '已重置为默认值', icon: 'success' })
+      wx.showToast({ title: '主题已更换', icon: 'success' })
     },
 
     refreshServices() {
@@ -153,14 +114,6 @@ Component({
       })
     },
 
-    onServiceChange(e) {
-      const index = e.detail.value
-      const service = this.data.services[index]
-      if (service) {
-        this.setData({ selectedServiceId: service.uuid })
-      }
-    },
-
     onWriteCharChange(e) {
       const index = e.detail.value
       const char = this.data.writeCharacteristics[index]
@@ -195,7 +148,7 @@ Component({
 
       wx.showModal({
         title: '确认保存',
-        content: '确定要应用新的特征值设置吗？这将重新配置蓝牙连接。',
+        content: '确定要应用新的特征值设置吗？',
         success: (res) => {
           if (res.confirm) {
             this.applySettings()
@@ -228,14 +181,6 @@ Component({
 
     onRefresh() {
       this.refreshServices()
-    },
-
-    formatUuid(uuid) {
-      if (!uuid) return ''
-      if (uuid.length > 8) {
-        return uuid.substring(4, 8).toUpperCase()
-      }
-      return uuid.toUpperCase()
     }
   }
 })

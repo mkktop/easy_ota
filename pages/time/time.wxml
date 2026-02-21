@@ -1,0 +1,9 @@
+<navigation-bar title="蓝牙授时" back="{{true}}" color="white" background="transparent"></navigation-bar>
+<view class="page-bg" style="background: {{themeGradient}};"></view>
+<view class="container">
+  <view class="coming-soon">
+    <text class="coming-icon">🕐</text>
+    <text class="coming-title">敬请期待</text>
+    <text class="coming-desc">蓝牙授时功能正在开发中</text>
+  </view>
+</view>

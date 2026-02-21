@@ -1,8 +1,13 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs",
-    "pages/settings/settings"
+    "pages/home/home",
+    "pages/ota/ota",
+    "pages/ota-settings/ota-settings",
+    "pages/wifi/wifi",
+    "pages/time/time",
+    "pages/settings/settings",
+    "pages/logs/logs"
   ],
   "window": {
     "navigationBarTextStyle": "black",

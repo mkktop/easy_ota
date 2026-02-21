@@ -1,0 +1,59 @@
+<navigation-bar title="OTA设置" back="{{true}}" color="white" background="transparent"></navigation-bar>
+<view class="page-bg" style="background: {{themeGradient}};"></view>
+<scroll-view class="scrollarea" scroll-y scroll-anchoring="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+  <view class="container">
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">传输参数</text>
+      </view>
+      <view class="ota-settings">
+        <view class="setting-item">
+          <view class="setting-label">
+            <text class="label-text">分包大小</text>
+            <text class="label-unit">(字节)</text>
+          </view>
+          <view class="setting-input-wrap">
+            <input 
+              class="setting-input" 
+              type="number" 
+              value="{{chunkSize}}"
+              bindinput="onChunkSizeInput"
+              placeholder="1-4096"
+            />
+          </view>
+        </view>
+        <view class="setting-hint">每包数据大小，范围: 1-{{maxChunkSize}} 字节，默认: {{defaultChunkSize}}</view>
+        
+        <view class="setting-item">
+          <view class="setting-label">
+            <text class="label-text">包间隔</text>
+            <text class="label-unit">(毫秒)</text>
+          </view>
+          <view class="setting-input-wrap">
+            <input 
+              class="setting-input" 
+              type="number" 
+              value="{{chunkDelay}}"
+              bindinput="onChunkDelayInput"
+              placeholder="0-10000"
+            />
+          </view>
+        </view>
+        <view class="setting-hint">每包发送间隔，范围: 0-{{maxChunkDelay}} 毫秒，默认: {{defaultChunkDelay}}</view>
+        
+        <view class="setting-item switch-item">
+          <view class="setting-label">
+            <text class="label-text">握手确认</text>
+          </view>
+          <switch checked="{{handshakeEnabled}}" bindchange="onHandshakeChange" color="#667eea" />
+        </view>
+        <view class="setting-hint">开启后，发送OTA启动命令会等待设备响应ACK再传输数据</view>
+        
+        <view class="setting-btn-group">
+          <button class="btn-reset" bindtap="onResetOtaSettings">重置默认</button>
+          <button class="btn-save" bindtap="onSaveOtaSettings">保存设置</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>

@@ -1,0 +1,105 @@
+<navigation-bar title="OTA升级" back="{{true}}" color="white" background="transparent"></navigation-bar>
+<view class="page-bg" style="background: {{themeGradient}};"></view>
+<scroll-view class="scrollarea" scroll-y scroll-anchoring="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+  <view class="container">
+    <view class="ota-section">
+      <view class="section-header">
+        <view class="section-icon">📦</view>
+        <text class="section-title">固件升级</text>
+      </view>
+      
+      <view class="firmware-card">
+        <view class="firmware-header">
+          <text class="firmware-label">固件信息</text>
+          <text class="firmware-source {{firmwareSource ? 'active' : ''}}">{{firmwareSource || '未选择'}}</text>
+        </view>
+        <view class="firmware-details" wx:if="{{firmwareName}}">
+          <view class="detail-item">
+            <text class="detail-label">文件名</text>
+            <text class="detail-value">{{firmwareName}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{firmwareSize > 0}}">
+            <text class="detail-label">大小</text>
+            <text class="detail-value">{{firmwareSize}} 字节</text>
+          </view>
+        </view>
+        <view class="firmware-empty" wx:else>
+          <text class="empty-icon">📁</text>
+          <text class="empty-text">请选择固件文件</text>
+        </view>
+      </view>
+
+      <view class="btn-group firmware-btns">
+        <button class="btn btn-outline btn-icon-btn" bindtap="onChooseFile" disabled="{{isUpgrading}}">
+          <text class="btn-icon">📄</text>
+          <text>选择文件</text>
+        </button>
+        <button class="btn btn-outline btn-icon-btn" bindtap="onShowFirmwareInput" disabled="{{isUpgrading}}">
+          <text class="btn-icon">🔗</text>
+          <text>输入链接</text>
+        </button>
+      </view>
+
+      <view class="progress-section" wx:if="{{isUpgrading}}">
+        <view class="progress-header">
+          <text class="progress-label">升级进度</text>
+          <text class="progress-percent">{{otaProgress}}%</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{otaProgress}}%"></view>
+          <view class="progress-glow" style="left: {{otaProgress}}%"></view>
+        </view>
+        <view class="progress-status">
+          <text class="status-icon-animate">⚡</text>
+          <text class="status-text">{{otaStatus || '准备中...'}}</text>
+        </view>
+      </view>
+
+      <view class="status-info" wx:else>
+        <text class="status-dot {{firmwareSource ? 'ready' : ''}}"></text>
+        <text>{{otaStatus || (firmwareSource ? '准备就绪，可以开始升级' : '请先选择固件文件')}}</text>
+      </view>
+
+      <view class="btn-group action-btns">
+        <button class="btn btn-success btn-large" bindtap="onStartOTA" disabled="{{isUpgrading || !firmwareSource}}" wx:if="{{!isUpgrading}}">
+          <text class="btn-icon">🚀</text>
+          <text>开始升级</text>
+        </button>
+        <button class="btn btn-warning btn-large" bindtap="onCancelOTA" wx:else>
+          <text class="btn-icon">⏹️</text>
+          <text>取消升级</text>
+        </button>
+      </view>
+
+      <view class="settings-entry">
+        <button class="btn btn-settings-link" bindtap="onGoToSettings">
+          <text class="btn-icon">⚙️</text>
+          <text>OTA传输设置</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+
+<view class="firmware-modal" wx:if="{{showFirmwareInput}}">
+  <view class="modal-mask" bindtap="onCancelFirmwareInput"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">输入固件链接</text>
+      <text class="modal-close" bindtap="onCancelFirmwareInput">×</text>
+    </view>
+    <view class="modal-body">
+      <input 
+        class="url-input" 
+        type="text" 
+        placeholder="请输入固件下载地址"
+        value="{{firmwareUrl}}"
+        bindinput="onFirmwareUrlInput"
+      />
+      <view class="modal-btn-group">
+        <button class="btn btn-small btn-default" bindtap="onCancelFirmwareInput">取消</button>
+        <button class="btn btn-small btn-primary" bindtap="onConfirmFirmwareUrl">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

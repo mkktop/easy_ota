@@ -9,16 +9,25 @@ const BluetoothManager = {
   writeWithResponse: false,
   allServices: [],
   allCharacteristics: [],
+  adapterReady: false,
 
   init() {
     return new Promise((resolve, reject) => {
+      if (this.adapterReady) {
+        resolve()
+        return
+      }
       wx.openBluetoothAdapter({
         success: () => {
           console.log('蓝牙初始化成功')
+          this.adapterReady = true
           resolve()
         },
         fail: (err) => {
           console.error('蓝牙初始化失败', err)
+          if (err.errCode === 10001) {
+            this.adapterReady = false
+          }
           reject(err)
         }
       })
@@ -442,10 +451,14 @@ const BluetoothManager = {
             resolve()
           },
           fail: (err) => {
-            reject(err)
+            this.isConnected = false
+            this.deviceId = null
+            console.log('断开连接失败，但已重置状态')
+            resolve()
           }
         })
       } else {
+        this.isConnected = false
         resolve()
       }
     })

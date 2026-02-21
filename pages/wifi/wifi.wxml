@@ -1,0 +1,9 @@
+<navigation-bar title="WIFI配置" back="{{true}}" color="white" background="transparent"></navigation-bar>
+<view class="page-bg" style="background: {{themeGradient}};"></view>
+<view class="container">
+  <view class="coming-soon">
+    <text class="coming-icon">📶</text>
+    <text class="coming-title">敬请期待</text>
+    <text class="coming-desc">WIFI配置功能正在开发中</text>
+  </view>
+</view>

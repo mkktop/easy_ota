@@ -1,73 +1,33 @@
-<navigation-bar title="设置" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+<navigation-bar title="全局设置" back="{{true}}" color="white" background="transparent"></navigation-bar>
+<view class="page-bg" style="background: {{themeGradient}};"></view>
 <scroll-view class="scrollarea" scroll-y scroll-anchoring="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
   <view class="container">
-    <view class="status-card">
-      <view class="status-row">
-        <text class="label">连接状态:</text>
-        <text class="value {{isConnected ? 'connected' : 'disconnected'}}">
-          {{isConnected ? '已连接' : '未连接'}}
-        </text>
-      </view>
-    </view>
-
     <view class="section">
       <view class="section-header">
-        <text class="section-title">OTA传输设置</text>
+        <text class="section-title">🎨 主题设置</text>
       </view>
-      <view class="ota-settings">
-        <view class="setting-item">
-          <view class="setting-label">
-            <text class="label-text">分包大小</text>
-            <text class="label-unit">(字节)</text>
-          </view>
-          <view class="setting-input-wrap">
-            <input 
-              class="setting-input" 
-              type="number" 
-              value="{{chunkSize}}"
-              bindinput="onChunkSizeInput"
-              placeholder="1-4096"
-            />
-          </view>
-        </view>
-        <view class="setting-hint">每包数据大小，范围: 1-{{maxChunkSize}} 字节，默认: {{defaultChunkSize}}</view>
-        
-        <view class="setting-item">
-          <view class="setting-label">
-            <text class="label-text">包间隔</text>
-            <text class="label-unit">(毫秒)</text>
-          </view>
-          <view class="setting-input-wrap">
-            <input 
-              class="setting-input" 
-              type="number" 
-              value="{{chunkDelay}}"
-              bindinput="onChunkDelayInput"
-              placeholder="0-10000"
-            />
-          </view>
-        </view>
-        <view class="setting-hint">每包发送间隔，范围: 0-{{maxChunkDelay}} 毫秒，默认: {{defaultChunkDelay}}</view>
-        
-        <view class="setting-item switch-item">
-          <view class="setting-label">
-            <text class="label-text">握手确认</text>
-          </view>
-          <switch checked="{{handshakeEnabled}}" bindchange="onHandshakeChange" color="#667eea" />
-        </view>
-        <view class="setting-hint">开启后，发送OTA启动命令会等待设备响应ACK再传输数据</view>
-        
-        <view class="setting-btn-group">
-          <button class="btn-reset" bindtap="onResetOtaSettings">重置默认</button>
-          <button class="btn-save-ota" bindtap="onSaveOtaSettings">保存设置</button>
+      <view class="theme-list">
+        <view 
+          class="theme-item {{currentThemeId === item.id ? 'active' : ''}}" 
+          wx:for="{{themes}}" 
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onThemeChange">
+          <view class="theme-preview" style="background: {{item.gradient}};"></view>
+          <text class="theme-name">{{item.name}}</text>
+          <view class="theme-check" wx:if="{{currentThemeId === item.id}}">✓</view>
         </view>
       </view>
     </view>
 
     <view class="section" wx:if="{{isConnected}}">
       <view class="section-header">
-        <text class="section-title">当前特征值配置</text>
+        <text class="section-title">📡 蓝牙特征值</text>
+        <button class="btn-refresh" bindtap="onRefresh" disabled="{{loading}}">
+          刷新
+        </button>
       </view>
+      
       <view class="current-config">
         <view class="config-row">
           <text class="config-label">服务UUID:</text>
@@ -81,15 +41,6 @@
           <text class="config-label">通知特征值:</text>
           <text class="config-value">{{currentNotifyCharId || '未设置'}}</text>
         </view>
-      </view>
-    </view>
-
-    <view class="section" wx:if="{{isConnected}}">
-      <view class="section-header">
-        <text class="section-title">自定义特征值</text>
-        <button class="btn-refresh" bindtap="onRefresh" disabled="{{loading}}">
-          刷新
-        </button>
       </view>
 
       <view class="picker-group">
@@ -138,13 +89,8 @@
 
     <view class="section" wx:if="{{!isConnected}}">
       <view class="empty-tip">
-        <text>请先在首页连接蓝牙设备</text>
-      </view>
-    </view>
-
-    <view class="section" wx:if="{{isConnected && writeCharacteristics.length === 0 && !loading}}">
-      <view class="empty-tip">
-        <text>未找到可用的特征值，请点击刷新重试</text>
+        <text class="empty-icon">📡</text>
+        <text class="empty-text">请先连接蓝牙设备以配置特征值</text>
       </view>
     </view>
   </view>
