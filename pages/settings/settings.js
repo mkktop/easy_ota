@@ -16,11 +16,13 @@ Component({
     isConnected: false,
     loading: false,
     chunkSize: 256,
-    chunkDelay: 150,
+    chunkDelay: 100,
     defaultChunkSize: 256,
-    defaultChunkDelay: 150,
+    defaultChunkDelay: 100,
     maxChunkSize: 4096,
-    maxChunkDelay: 10000
+    maxChunkDelay: 10000,
+    handshakeEnabled: true,
+    defaultHandshakeEnabled: true
   },
 
   lifetimes: {
@@ -59,7 +61,9 @@ Component({
         defaultChunkSize: settings.defaultChunkSize,
         defaultChunkDelay: settings.defaultChunkDelay,
         maxChunkSize: settings.maxChunkSize,
-        maxChunkDelay: settings.maxChunkDelay
+        maxChunkDelay: settings.maxChunkDelay,
+        handshakeEnabled: settings.handshakeEnabled,
+        defaultHandshakeEnabled: settings.defaultHandshakeEnabled
       })
     },
 
@@ -77,8 +81,12 @@ Component({
       this.setData({ chunkDelay: value })
     },
 
+    onHandshakeChange(e) {
+      this.setData({ handshakeEnabled: e.detail.value })
+    },
+
     onSaveOtaSettings() {
-      const { chunkSize, chunkDelay, maxChunkSize, maxChunkDelay } = this.data
+      const { chunkSize, chunkDelay, maxChunkSize, maxChunkDelay, handshakeEnabled } = this.data
       
       if (chunkSize < 1 || chunkSize > maxChunkSize) {
         wx.showToast({ title: '分包大小范围: 1-' + maxChunkSize, icon: 'none' })
@@ -92,14 +100,17 @@ Component({
       
       ota.setChunkSize(chunkSize)
       ota.setChunkDelay(chunkDelay)
+      ota.setHandshakeEnabled(handshakeEnabled)
       wx.showToast({ title: 'OTA设置已保存', icon: 'success' })
     },
 
     onResetOtaSettings() {
       ota.resetToDefaults()
+      const settings = ota.getOtaSettings()
       this.setData({
-        chunkSize: this.data.defaultChunkSize,
-        chunkDelay: this.data.defaultChunkDelay
+        chunkSize: settings.defaultChunkSize,
+        chunkDelay: settings.defaultChunkDelay,
+        handshakeEnabled: settings.defaultHandshakeEnabled
       })
       wx.showToast({ title: '已重置为默认值', icon: 'success' })
     },

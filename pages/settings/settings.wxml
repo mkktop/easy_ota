@@ -49,6 +49,14 @@
         </view>
         <view class="setting-hint">每包发送间隔，范围: 0-{{maxChunkDelay}} 毫秒，默认: {{defaultChunkDelay}}</view>
         
+        <view class="setting-item switch-item">
+          <view class="setting-label">
+            <text class="label-text">握手确认</text>
+          </view>
+          <switch checked="{{handshakeEnabled}}" bindchange="onHandshakeChange" color="#667eea" />
+        </view>
+        <view class="setting-hint">开启后，发送OTA启动命令会等待设备响应ACK再传输数据</view>
+        
         <view class="setting-btn-group">
           <button class="btn-reset" bindtap="onResetOtaSettings">重置默认</button>
           <button class="btn-save-ota" bindtap="onSaveOtaSettings">保存设置</button>

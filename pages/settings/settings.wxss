@@ -240,6 +240,10 @@ page {
   padding-left: 10rpx;
 }
 
+.switch-item {
+  margin-top: 10rpx;
+}
+
 .setting-btn-group {
   display: flex;
   gap: 20rpx;

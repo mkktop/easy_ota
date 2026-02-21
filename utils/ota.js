@@ -5,11 +5,13 @@ const OTA = {
   FRAME_TAIL: '7E5A',
   OTA_ACK_CMD: '5D6CAABBCC7E5A',
   CHUNK_SIZE: 256,
-  CHUNK_DELAY: 150,
+  CHUNK_DELAY: 100,
   DEFAULT_CHUNK_SIZE: 256,
-  DEFAULT_CHUNK_DELAY: 150,
+  DEFAULT_CHUNK_DELAY: 100,
   MAX_CHUNK_SIZE: 4096,
   MAX_CHUNK_DELAY: 10000,
+  HANDSHAKE_ENABLED: true,
+  DEFAULT_HANDSHAKE_ENABLED: true,
   firmwareUrl: '',
   firmwareData: null,
   firmwareName: '',
@@ -31,6 +33,11 @@ const OTA = {
     }
   },
 
+  setHandshakeEnabled(enabled) {
+    this.HANDSHAKE_ENABLED = enabled
+    console.log('设置握手确认:', enabled)
+  },
+
   getChunkSize() {
     return this.CHUNK_SIZE
   },
@@ -39,10 +46,15 @@ const OTA = {
     return this.CHUNK_DELAY
   },
 
+  isHandshakeEnabled() {
+    return this.HANDSHAKE_ENABLED
+  },
+
   resetToDefaults() {
     this.CHUNK_SIZE = this.DEFAULT_CHUNK_SIZE
     this.CHUNK_DELAY = this.DEFAULT_CHUNK_DELAY
-    console.log('重置为默认值: 分包大小=', this.CHUNK_SIZE, '包间隔=', this.CHUNK_DELAY)
+    this.HANDSHAKE_ENABLED = this.DEFAULT_HANDSHAKE_ENABLED
+    console.log('重置为默认值: 分包大小=', this.CHUNK_SIZE, '包间隔=', this.CHUNK_DELAY, '握手确认=', this.HANDSHAKE_ENABLED)
   },
 
   getOtaSettings() {
@@ -52,7 +64,9 @@ const OTA = {
       defaultChunkSize: this.DEFAULT_CHUNK_SIZE,
       defaultChunkDelay: this.DEFAULT_CHUNK_DELAY,
       maxChunkSize: this.MAX_CHUNK_SIZE,
-      maxChunkDelay: this.MAX_CHUNK_DELAY
+      maxChunkDelay: this.MAX_CHUNK_DELAY,
+      handshakeEnabled: this.HANDSHAKE_ENABLED,
+      defaultHandshakeEnabled: this.DEFAULT_HANDSHAKE_ENABLED
     }
   },
 
@@ -219,13 +233,15 @@ const OTA = {
         this.updateStatus('发送OTA启动命令...')
         console.log('发送OTA启动命令:', otaStartCmd)
         await btManager.write(otaStartCmd)
-        this.updateStatus('等待设备响应...')
         
-        const ackReceived = await this.waitForAck(10000)
-        if (!ackReceived) {
-          this.isUpgrading = false
-          reject(new Error('设备未响应OTA启动命令（超时10秒）'))
-          return
+        if (this.HANDSHAKE_ENABLED) {
+          this.updateStatus('等待设备响应...')
+          const ackReceived = await this.waitForAck(10000)
+          if (!ackReceived) {
+            this.isUpgrading = false
+            reject(new Error('设备未响应OTA启动命令（超时10秒）'))
+            return
+          }
         }
         
         this.updateStatus('开始传输固件...')
