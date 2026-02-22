@@ -1,48 +1,23 @@
-<navigation-bar title="Easy OTA" back="{{false}}" color="white" background="transparent"></navigation-bar>
+<navigation-bar title="功能列表" back="{{false}}" color="white" background="transparent"></navigation-bar>
 <view class="page-bg" style="background: {{themeGradient}};"></view>
 <scroll-view class="scrollarea" scroll-y scroll-anchoring="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
   <view class="container">
-    <view class="header-section">
-      <view class="status-icon-wrapper {{isConnected ? 'connected' : 'disconnected'}}">
-        <view class="status-icon">
-          <view class="bluetooth-icon">
-            <view class="bt-body"></view>
-            <view class="bt-top"></view>
-            <view class="bt-bottom"></view>
-          </view>
+    <view class="menu-list">
+      <view 
+        class="menu-item" 
+        wx:for="{{menuItems}}" 
+        wx:key="id"
+        data-item="{{item}}"
+        bindtap="onMenuItemTap">
+        <view class="menu-icon">{{item.icon}}</view>
+        <view class="menu-content">
+          <text class="menu-title">{{item.title}}</text>
+          <text class="menu-desc">{{item.desc}}</text>
         </view>
-        <view class="pulse-ring" wx:if="{{isConnected}}"></view>
+        <view class="menu-arrow">›</view>
       </view>
-      <text class="status-title">{{isConnected ? '设备已连接' : '未连接设备'}}</text>
-      <text class="device-name" wx:if="{{connectedDevice}}">{{connectedDevice.name}}</text>
-      <view class="status-badge {{isConnected ? 'connected' : 'disconnected'}}">
-        <view class="badge-dot"></view>
-        <text>{{isConnected ? '在线' : '离线'}}</text>
-      </view>
-    </view>
-
-    <view class="menu-section">
-      <view class="menu-list">
-        <view 
-          class="menu-item" 
-          wx:for="{{menuItems}}" 
-          wx:key="id"
-          data-item="{{item}}"
-          bindtap="onMenuItemTap">
-          <view class="menu-icon">{{item.icon}}</view>
-          <view class="menu-content">
-            <text class="menu-title">{{item.title}}</text>
-            <text class="menu-desc">{{item.desc}}</text>
-          </view>
-          <view class="menu-arrow">›</view>
-        </view>
-      </view>
-    </view>
-
-    <view class="action-section" wx:if="{{isConnected}}">
-      <button class="btn-disconnect" bindtap="onDisconnect">
-        断开蓝牙连接
-      </button>
     </view>
   </view>
 </scroll-view>
+
+<tab-bar current="feature" />

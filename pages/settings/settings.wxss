@@ -24,7 +24,7 @@ page {
   display: flex;
   flex-direction: column;
   padding: 30rpx;
-  padding-bottom: 50rpx;
+  padding-bottom: 140rpx;
   box-sizing: border-box;
 }
 

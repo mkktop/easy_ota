@@ -81,6 +81,8 @@
   </view>
 </scroll-view>
 
+<tab-bar current="feature" />
+
 <view class="firmware-modal" wx:if="{{showFirmwareInput}}">
   <view class="modal-mask" bindtap="onCancelFirmwareInput"></view>
   <view class="modal-content">

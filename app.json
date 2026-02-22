@@ -1,6 +1,6 @@
 {
   "pages": [
-    "pages/index/index",
+    "pages/bluetooth/bluetooth",
     "pages/home/home",
     "pages/ota/ota",
     "pages/ota-settings/ota-settings",

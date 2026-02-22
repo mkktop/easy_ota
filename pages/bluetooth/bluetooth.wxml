@@ -1,0 +1,85 @@
+<navigation-bar title="蓝牙连接" back="{{false}}" color="white" background="transparent"></navigation-bar>
+<view class="page-bg" style="background: {{themeGradient}};"></view>
+<scroll-view class="scrollarea" scroll-y scroll-anchoring="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+  <view class="container">
+    <view class="status-section">
+      <view class="status-icon-wrapper {{isConnected ? 'connected' : 'disconnected'}}">
+        <view class="status-icon">
+          <view class="bluetooth-icon">
+            <view class="bt-body"></view>
+            <view class="bt-top"></view>
+            <view class="bt-bottom"></view>
+          </view>
+        </view>
+        <view class="pulse-ring" wx:if="{{isConnected}}"></view>
+      </view>
+      <text class="status-title">{{isConnected ? '设备已连接' : '未连接设备'}}</text>
+      <text class="device-name" wx:if="{{connectedDevice}}">{{connectedDevice.name}}</text>
+      <view class="status-badge {{isConnected ? 'connected' : 'disconnected'}}">
+        <view class="badge-dot"></view>
+        <text>{{isConnected ? '在线' : '离线'}}</text>
+      </view>
+    </view>
+
+    <view class="action-section">
+      <view class="btn-group" wx:if="{{!isConnected}}">
+        <button class="btn btn-primary" bindtap="onScanBluetooth">
+          <text class="btn-icon">🔍</text>
+          <text>搜索蓝牙设备</text>
+        </button>
+      </view>
+      <view class="btn-group" wx:else>
+        <button class="btn btn-danger" bindtap="onDisconnect">
+          <text class="btn-icon">❌</text>
+          <text>断开连接</text>
+        </button>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{isConnected}}">
+      <view class="info-card">
+        <view class="info-header">
+          <text class="info-title">连接信息</text>
+        </view>
+        <view class="info-list">
+          <view class="info-item">
+            <text class="info-label">设备ID</text>
+            <text class="info-value">{{connectedDevice.deviceId || '未知'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+
+<tab-bar current="bluetooth" />
+
+<view class="device-modal" wx:if="{{showDeviceList}}">
+  <view class="modal-mask" bindtap="onCloseDeviceList"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">选择蓝牙设备</text>
+      <text class="modal-close" bindtap="onCloseDeviceList">×</text>
+    </view>
+    <scroll-view class="modal-body" scroll-y enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="scanning-tip" wx:if="{{isScanning}}">
+        <text>正在搜索...</text>
+        <button class="btn-small" bindtap="onStopScan">停止搜索</button>
+      </view>
+      <view class="device-list" wx:if="{{deviceList.length > 0}}">
+        <view 
+          class="device-item" 
+          wx:for="{{deviceList}}" 
+          wx:key="deviceId"
+          data-device="{{item}}"
+          bindtap="onSelectDevice">
+          <text class="device-name">{{item.name}}</text>
+          <text class="device-rssi">信号: {{item.RSSI}} dBm</text>
+        </view>
+      </view>
+      <view class="empty-tip" wx:else>
+        <text>暂未发现设备</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>

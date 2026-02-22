@@ -7,3 +7,5 @@
     <text class="coming-desc">蓝牙授时功能正在开发中</text>
   </view>
 </view>
+
+<tab-bar current="feature" />

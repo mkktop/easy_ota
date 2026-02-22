@@ -1,13 +1,8 @@
-const btManager = require('../../utils/bluetooth')
 const themeManager = require('../../utils/theme')
 
 Component({
   data: {
-    isConnected: false,
-    connectedDevice: null,
     themeGradient: '',
-    themePrimary: '',
-    themeSecondary: '',
     menuItems: [
       {
         id: 'ota',
@@ -43,33 +38,19 @@ Component({
   lifetimes: {
     attached() {
       this.loadTheme()
-      this.checkConnection()
     }
   },
 
   pageLifetimes: {
     show() {
       this.loadTheme()
-      this.checkConnection()
     }
   },
 
   methods: {
     loadTheme() {
       const theme = themeManager.getTheme()
-      this.setData({
-        themeGradient: theme.gradient,
-        themePrimary: theme.primary,
-        themeSecondary: theme.secondary
-      })
-    },
-
-    checkConnection() {
-      const isConnected = btManager.isConnected
-      this.setData({
-        isConnected,
-        connectedDevice: btManager.deviceId ? { name: '已连接设备' } : null
-      })
+      this.setData({ themeGradient: theme.gradient })
     },
 
     onMenuItemTap(e) {
@@ -85,31 +66,7 @@ Component({
         return
       }
       
-      wx.navigateTo({
-        url: item.url
-      })
-    },
-
-    onDisconnect() {
-      wx.showModal({
-        title: '断开连接',
-        content: '确定要断开当前蓝牙连接吗？',
-        success: (res) => {
-          if (res.confirm) {
-            btManager.disconnect()
-            this.setData({
-              isConnected: false,
-              connectedDevice: null
-            })
-            wx.showToast({ title: '已断开连接', icon: 'success' })
-            setTimeout(() => {
-              wx.redirectTo({
-                url: '/pages/index/index'
-              })
-            }, 500)
-          }
-        }
-      })
+      wx.navigateTo({ url: item.url })
     }
   }
 })

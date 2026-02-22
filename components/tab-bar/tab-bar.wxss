@@ -1,0 +1,59 @@
+.tab-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100rpx;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(30px);
+  border-top: 1rpx solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  box-sizing: border-box;
+  z-index: 9999;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.tab-item.active {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.tab-text-wrap {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.tab-text {
+  font-size: 32rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tab-item.active .tab-text {
+  color: #fff;
+  font-weight: 600;
+}
+
+.status-indicator {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  margin-left: 12rpx;
+}
+
+.status-indicator.connected {
+  background: #4CAF50;
+  box-shadow: 0 0 8rpx rgba(76, 175, 80, 0.6);
+}
+
+.status-indicator.disconnected {
+  background: rgba(255, 255, 255, 0.4);
+}

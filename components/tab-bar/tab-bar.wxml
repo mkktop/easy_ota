@@ -1,0 +1,12 @@
+<view class="tab-bar">
+  <view class="tab-item {{current === 'bluetooth' ? 'active' : ''}}" bindtap="onBluetoothTap">
+    <view class="tab-text-wrap">
+      <text class="tab-text">蓝牙</text>
+      <view class="status-indicator {{isConnected ? 'connected' : 'disconnected'}}"></view>
+    </view>
+  </view>
+  
+  <view class="tab-item {{current === 'feature' ? 'active' : ''}}" bindtap="onFeatureTap">
+    <text class="tab-text">功能</text>
+  </view>
+</view>
