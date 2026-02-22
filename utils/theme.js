@@ -47,7 +47,7 @@ const ThemeManager = {
   currentTheme: null,
 
   init() {
-    const savedThemeId = wx.getStorageSync('themeId') || 'purple'
+    const savedThemeId = wx.getStorageSync('themeId') || 'green'
     this.setTheme(savedThemeId)
   },
 

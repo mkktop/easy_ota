@@ -214,7 +214,7 @@ page {
 .power-icon {
   width: 24rpx;
   height: 24rpx;
-  border: 4rpx solid rgba(255, 255, 255, 0.9);
+  border: 4rpx solid #ff5252;
   border-radius: 50%;
   position: relative;
 }
@@ -227,7 +227,7 @@ page {
   transform: translateX(-50%);
   width: 4rpx;
   height: 12rpx;
-  background: rgba(255, 255, 255, 0.9);
+  background: #ff5252;
   border-radius: 2rpx;
 }
 
