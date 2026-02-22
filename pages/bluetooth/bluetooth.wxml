@@ -5,48 +5,40 @@
     <view class="status-section">
       <view class="status-icon-wrapper {{isConnected ? 'connected' : 'disconnected'}}">
         <view class="status-icon">
-          <view class="bluetooth-icon">
-            <view class="bt-body"></view>
-            <view class="bt-top"></view>
-            <view class="bt-bottom"></view>
+          <view class="paper-plane">
+            <view class="plane-body"></view>
+            <view class="plane-wing-left"></view>
+            <view class="plane-wing-right"></view>
+            <view class="plane-trail" wx:if="{{isConnected}}"></view>
           </view>
         </view>
         <view class="pulse-ring" wx:if="{{isConnected}}"></view>
       </view>
       <text class="status-title">{{isConnected ? '设备已连接' : '未连接设备'}}</text>
       <text class="device-name" wx:if="{{connectedDevice}}">{{connectedDevice.name}}</text>
-      <view class="status-badge {{isConnected ? 'connected' : 'disconnected'}}">
-        <view class="badge-dot"></view>
-        <text>{{isConnected ? '在线' : '离线'}}</text>
+      <view class="status-row">
+        <view class="status-badge {{isConnected ? 'connected' : 'disconnected'}}">
+          <view class="badge-dot"></view>
+          <text>{{isConnected ? '在线' : '离线'}}</text>
+        </view>
+        <view class="power-btn" wx:if="{{isConnected}}" bindtap="onDisconnect">
+          <view class="power-icon"></view>
+        </view>
       </view>
     </view>
 
-    <view class="action-section">
-      <view class="btn-group" wx:if="{{!isConnected}}">
+    <view class="action-section" wx:if="{{!isConnected}}">
+      <view class="btn-group">
         <button class="btn btn-primary" bindtap="onScanBluetooth">
           <text class="btn-icon">🔍</text>
           <text>搜索蓝牙设备</text>
-        </button>
-      </view>
-      <view class="btn-group" wx:else>
-        <button class="btn btn-danger" bindtap="onDisconnect">
-          <text class="btn-icon">❌</text>
-          <text>断开连接</text>
         </button>
       </view>
     </view>
 
     <view class="info-section" wx:if="{{isConnected}}">
       <view class="info-card">
-        <view class="info-header">
-          <text class="info-title">连接信息</text>
-        </view>
-        <view class="info-list">
-          <view class="info-item">
-            <text class="info-label">设备ID</text>
-            <text class="info-value">{{connectedDevice.deviceId || '未知'}}</text>
-          </view>
-        </view>
+        <text class="connected-name">{{connectedDevice.name || '未知设备'}}</text>
       </view>
     </view>
   </view>

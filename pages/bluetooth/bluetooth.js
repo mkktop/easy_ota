@@ -45,9 +45,10 @@ Component({
 
     checkConnection() {
       const isConnected = btManager.isConnected
+      const connectedDevice = btManager.connectedDevice || null
       this.setData({
         isConnected,
-        connectedDevice: isConnected ? { name: '已连接设备' } : null
+        connectedDevice
       })
     },
 
@@ -89,6 +90,7 @@ Component({
       btManager.connect(device.deviceId)
         .then(() => {
           wx.hideLoading()
+          btManager.connectedDevice = device
           this.setData({ isConnected: true, connectedDevice: device })
           wx.showToast({ title: '连接成功', icon: 'success' })
           return btManager.getAllServicesAndCharacteristics()
@@ -107,6 +109,7 @@ Component({
         success: (res) => {
           if (res.confirm) {
             btManager.disconnect()
+            btManager.connectedDevice = null
             this.setData({ isConnected: false, connectedDevice: null })
             wx.showToast({ title: '已断开', icon: 'success' })
           }
